@@ -1,14 +1,14 @@
-FROM php:apache
+FROM php:7.2-apache 
 MAINTAINER Radomir Orkac <radomir@orkac.cz>
 
 RUN apt-get update && apt-get upgrade -y \
-&& apt-get install -yq libpng-dev libjpeg62-turbo-dev libzip-dev zip \
+&& apt-get install -yq libpng-dev libjpeg62-turbo-dev libzip-dev zip zlib1g-dev \
 && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-configure zip --with-libzip \
-&& docker-php-ext-install pdo pdo_mysql mysqli gd zip \
+&& docker-php-ext-install pdo pdo_mysql mysqli gd zip mbstring \
 && rm -r /var/lib/apt/lists/*
 
-RUN a2enmod rewrite
+RUN a2enmod rewrite && a2enmod ssl
 
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 RUN sed -ri -e 's/post_max_size = 8M/post_max_size = 100M/g' /usr/local/etc/php/php.ini
